@@ -4,8 +4,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const axios = require('axios');
 
-// FIX: Correct Anthropic import
-const Anthropic = require('@anthropic-ai/sdk').default;
+// CORRECT: Anthropic import
+const Anthropic = require('@anthropic-ai/sdk');
 
 const connectDB = require('./config/mongodb');
 const Career = require('./models/Career');
@@ -20,9 +20,7 @@ app.use(express.json());
 
 console.log('Starting Career Advisor API with Vector Embeddings...\n');
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY
-});
+const client = new Anthropic();
 
 connectDB();
 
@@ -47,8 +45,6 @@ async function fetchJobsFromAdzuna(jobTitle) {
       title: job.title,
       company: job.company.display_name,
       location: job.location.display_name,
-      salaryMin: job.salary_min ? Math.round(job.salary_min / 1000) : null,
-      salaryMax: job.salary_max ? Math.round(job.salary_max / 1000) : null,
       salary: job.salary_max ? `$${Math.round(job.salary_min / 1000)}K - $${Math.round(job.salary_max / 1000)}K` : 'Competitive',
       posted: job.created.substring(0, 10),
       url: job.redirect_url,
