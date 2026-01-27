@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { Logo } from './Logo';
 import './App.css';
 
+// PRODUCTION URL - HARDCODED
+const API_URL = 'https://career-advisor-2dkz.onrender.com';
+
 function App() {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
@@ -25,7 +28,7 @@ function App() {
     setFollowUpSuggestions([]);
 
     try {
-      const response = await fetch('http://localhost:3000/api/career-advice', {
+      const response = await fetch(`${API_URL}/api/career-advice`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: queryQuestion })
@@ -42,16 +45,13 @@ function App() {
         setCareers(data.careers || []);
         setHasSearched(true);
 
-        // Add to conversation history
         setConversationHistory([
           ...conversationHistory,
           { question: queryQuestion, answer: data.answer }
         ]);
 
-        // Generate follow-up suggestions
         generateFollowUps(queryQuestion, data.answer);
 
-        // Clear input if using custom question
         if (customQuestion) {
           setQuestion('');
         }
@@ -68,97 +68,41 @@ function App() {
   const generateFollowUps = (originalQuestion, response) => {
     const suggestions = [];
     const lowerQuestion = originalQuestion.toLowerCase();
-    const lowerResponse = response.toLowerCase();
 
-    // React/Frontend specific
-    if (lowerQuestion.includes('react') || lowerQuestion.includes('frontend')) {
+    if (lowerQuestion.includes('software') || lowerQuestion.includes('developer')) {
       suggestions.push({
-        text: '💼 What companies are hiring React developers?',
-        query: 'What are the top companies hiring React/Frontend developers right now?'
+        text: '💼 What companies are hiring developers?',
+        query: 'What are top tech companies hiring software developers right now?'
       });
       suggestions.push({
-        text: '📈 How to move from React to Full-Stack?',
-        query: 'How can I transition from React developer to Full-Stack developer?'
+        text: '📈 How to increase my salary as a developer?',
+        query: 'How can I increase my salary as a software developer?'
       });
       suggestions.push({
-        text: '🔧 React skills to learn next?',
-        query: 'What advanced React skills should I learn to increase my salary prospects?'
+        text: '🚀 Frontend vs Backend - which to learn?',
+        query: 'Should I specialize in frontend or backend development?'
       });
-    }
-
-    // DevOps/Cloud specific
-    if (lowerQuestion.includes('devops') || lowerQuestion.includes('cloud')) {
+    } else if (lowerQuestion.includes('devops') || lowerQuestion.includes('cloud')) {
       suggestions.push({
         text: '🚀 DevOps certifications worth getting?',
-        query: 'What are the best DevOps certifications (AWS, Kubernetes) and their ROI?'
+        query: 'What are the best DevOps certifications (AWS, Kubernetes)?'
       });
       suggestions.push({
         text: '💻 Companies hiring DevOps engineers?',
-        query: 'Which companies are actively hiring DevOps engineers right now?'
+        query: 'Which companies are actively hiring DevOps engineers?'
       });
-      suggestions.push({
-        text: '⚡ DevOps salary expectations?',
-        query: 'What is the realistic salary range for DevOps engineers in 2026?'
-      });
-    }
-
-    // Data Science specific
-    if (lowerQuestion.includes('data scientist') || lowerQuestion.includes('machine learning')) {
-      suggestions.push({
-        text: '📊 ML frameworks to master?',
-        query: 'What machine learning frameworks and tools should I focus on?'
-      });
-      suggestions.push({
-        text: '🎓 Best ML certifications?',
-        query: 'What are the most valuable machine learning certifications?'
-      });
-      suggestions.push({
-        text: '💰 Data Scientist salary by level?',
-        query: 'What is the salary progression for data scientists from junior to senior?'
-      });
-    }
-
-    // Backend specific
-    if (lowerQuestion.includes('backend') || lowerQuestion.includes('node')) {
-      suggestions.push({
-        text: '🔐 Backend security best practices?',
-        query: 'What are critical security concepts every backend developer should know?'
-      });
-      suggestions.push({
-        text: '⚙️ Microservices vs Monolithic?',
-        query: 'Should I learn microservices architecture or monolithic first?'
-      });
-      suggestions.push({
-        text: '💾 Database design tips?',
-        query: 'What database design patterns are most important for backend engineers?'
-      });
-    }
-
-    // General career questions
-    if (lowerResponse.includes('salary') || lowerQuestion.includes('salary')) {
-      suggestions.push({
-        text: '💵 How to negotiate salary?',
-        query: 'How should I negotiate my salary as a tech professional?'
-      });
-    }
-
-    // Default suggestions if none match
-    if (suggestions.length === 0) {
+    } else {
       suggestions.push({
         text: '📋 Resume tips for this role?',
-        query: 'What should I include in my resume for this career path?'
+        query: 'What should I include in my resume for this career?'
       });
       suggestions.push({
-        text: '🎯 Interview preparation?',
-        query: 'How should I prepare for interviews in this field?'
-      });
-      suggestions.push({
-        text: '🚀 How to stand out?',
-        query: 'What can I do to stand out from other candidates?'
+        text: '🎯 How to stand out?',
+        query: 'What can I do to stand out as a candidate?'
       });
     }
 
-    setFollowUpSuggestions(suggestions.slice(0, 3)); // Limit to 3 suggestions
+    setFollowUpSuggestions(suggestions.slice(0, 3));
   };
 
   const handleKeyPress = (e) => {
@@ -173,7 +117,6 @@ function App() {
 
   return (
     <div className="app">
-      {/* Full Width Header */}
       <header className="header">
         <div className="header-content">
           <div className="header-text">
@@ -186,10 +129,7 @@ function App() {
         </div>
       </header>
 
-      {/* Main Content */}
       <div className={`main-content ${hasSearched ? 'split' : 'single'}`}>
-        
-        {/* Left Section */}
         <div className="left-section">
           <div className="card input-card">
             <h2>Your Question</h2>
@@ -245,7 +185,6 @@ function App() {
                 })}
               </div>
 
-              {/* Follow-up Suggestions */}
               {followUpSuggestions.length > 0 && (
                 <div className="followup-section">
                   <h3>Continue Exploring?</h3>
@@ -267,7 +206,6 @@ function App() {
           )}
         </div>
 
-        {/* Right Section - Only shows after search */}
         {hasSearched && (
           <div className="right-section">
             {careers.length > 0 && (
@@ -313,7 +251,7 @@ function App() {
 
             {!loading && answer && jobs.length === 0 && (
               <div className="card no-jobs">
-                <p>No jobs found at the moment. Try asking about a different role!</p>
+                <p>No jobs found. Try another role!</p>
               </div>
             )}
           </div>
