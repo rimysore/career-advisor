@@ -4,8 +4,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const axios = require('axios');
 
-// CORRECT: Anthropic import
-const Anthropic = require('@anthropic-ai/sdk');
+// CORRECT: Access .default from SDK
+const Anthropic = require('@anthropic-ai/sdk').default;
 
 const connectDB = require('./config/mongodb');
 const Career = require('./models/Career');
@@ -20,7 +20,9 @@ app.use(express.json());
 
 console.log('Starting Career Advisor API with Vector Embeddings...\n');
 
-const client = new Anthropic();
+const client = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY
+});
 
 connectDB();
 
@@ -93,7 +95,6 @@ app.post('/api/career-advice', async (req, res) => {
     const { question } = req.body;
     console.log(`User Question: "${question}"\n`);
 
-    // Vector search
     searchResults = await searchCareersWithVectors(question);
     
     if (searchResults.length === 0) {
@@ -130,7 +131,6 @@ Provide personalized career advice based on the database. Include:
     console.log('✅ Got response from Claude\n');
     answer = message.content[0].text;
 
-    // Extract and save skills
     console.log('📚 Extracting and saving skills...');
     extractedSkills = extractSkillsFromResponse(answer);
     
@@ -143,7 +143,6 @@ Provide personalized career advice based on the database. Include:
       console.log(`   ✅ Saved ${skillsSaved} new skills\n`);
     }
 
-    // Fetch relevant jobs
     console.log('🔍 Fetching relevant jobs from Adzuna...');
     for (const career of searchResults) {
       const careerJobs = await fetchJobsFromAdzuna(career.title);
@@ -151,7 +150,6 @@ Provide personalized career advice based on the database. Include:
     }
     console.log(`   Found ${jobs.length} jobs\n`);
 
-    // Save query
     await Query.create({
       question: question,
       answer: answer,
