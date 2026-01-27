@@ -1,0 +1,51 @@
+{
+  "careers": [
+    {
+      "id": "backend-developer",
+      "title": "Backend Developer",
+      "description": "Develops server-side applications and APIs",
+      "requiredSkills": ["Node.js", "Python", "Java", "Databases", "APIs", "System Design"],
+      "timeline": "4-6 months for frontend developers",
+      "salaryRange": "$100K-$180K",
+      "learningResources": ["Backend development bootcamps", "System design courses"],
+      "commonTransitions": ["Frontend Developer", "Full Stack Developer"],
+      "jobGrowth": "High - 15% growth expected"
+    },
+    {
+      "id": "data-scientist",
+      "title": "Data Scientist",
+      "description": "Analyzes data and builds ML models",
+      "requiredSkills": ["Python", "Statistics", "Machine Learning", "SQL", "Data Visualization"],
+      "timeline": "8-12 months for developers",
+      "salaryRange": "$120K-$200K",
+      "learningResources": ["Machine Learning bootcamps", "Statistics courses"],
+      "commonTransitions": ["Software Engineer", "Data Analyst"],
+      "jobGrowth": "Very High - 25% growth expected"
+    },
+    {
+      "id": "product-manager",
+      "title": "Product Manager",
+      "description": "Guides product development and strategy",
+      "requiredSkills": ["Product Strategy", "Analytics", "Communication", "Technical Knowledge"],
+      "timeline": "12-18 months for non-tech backgrounds",
+      "salaryRange": "$130K-$220K",
+      "learningResources": ["Product management courses", "MBA programs"],
+      "commonTransitions": ["Marketing Manager", "Software Engineer"],
+      "jobGrowth": "High - 20% growth expected"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Python",
+      "difficulty": "Medium",
+      "learningTime": "8-12 weeks",
+      "usedIn": ["Data Science", "AI Engineer", "Backend Developer"]
+    },
+    {
+      "name": "React",
+      "difficulty": "Medium",
+      "learningTime": "6-8 weeks",
+      "usedIn": ["Frontend Developer"]
+    }
+  ]
+}

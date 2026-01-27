@@ -1,0 +1,256 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background: linear-gradient(135deg, #0F172A 0%, #1a1a2e 100%);
+  color: #F1F5F9;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1000px;
+  width: 100%;
+  background: rgba(30, 41, 59, 0.95);
+  border: 1px solid rgba(13, 148, 136, 0.3);
+  border-radius: 20px;
+  padding: 50px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #6D28D9 0%, #0D9488 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header p {
+  color: #94A3B8;
+  font-size: 1.1rem;
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+textarea {
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(13, 148, 136, 0.3);
+  border-radius: 12px;
+  color: #F1F5F9;
+  font-size: 1rem;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #0D9488;
+  background: rgba(15, 23, 42, 0.95);
+  box-shadow: 0 0 20px rgba(13, 148, 136, 0.2);
+}
+
+textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button-group {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.btn-primary {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #6D28D9 0%, #0D9488 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(109, 40, 217, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.hint {
+  color: #64748B;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.error-section {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  color: #FECACA;
+  margin-bottom: 30px;
+}
+
+.loading-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 40px;
+  text-align: center;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(13, 148, 136, 0.2);
+  border-top-color: #0D9488;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.answer-section {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(13, 148, 136, 0.2);
+  border-radius: 12px;
+  padding: 30px;
+  max-height: 70vh;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.answer-content {
+  line-height: 1.8;
+  color: #CBD5E1;
+}
+
+.answer-content h1 {
+  color: #0D9488;
+  margin: 30px 0 20px;
+  font-size: 2rem;
+}
+
+.answer-content h2 {
+  color: #6D28D9;
+  margin: 25px 0 15px;
+  font-size: 1.5rem;
+}
+
+.answer-content h3 {
+  color: #0D9488;
+  margin: 20px 0 10px;
+  font-size: 1.2rem;
+}
+
+.answer-content p {
+  margin-bottom: 15px;
+}
+
+.answer-content p.bold {
+  color: #F1F5F9;
+  font-weight: 600;
+}
+
+.answer-content li {
+  margin-left: 30px;
+  margin-bottom: 8px;
+}
+
+.answer-content .table-line {
+  font-family: monospace;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 10px 0;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(13, 148, 136, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(13, 148, 136, 0.3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(13, 148, 136, 0.5);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 25px;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  textarea {
+    font-size: 16px;
+  }
+
+  .answer-section {
+    max-height: 60vh;
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "career-advisor-api",
+  "version": "1.0.0",
+  "description": "Career Advisor AI API with RAG and Vector Search",
+  "main": "src/api-agent.js",
+  "scripts": {
+    "start": "node src/api-agent.js",
+    "dev": "node src/api-agent.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["career", "ai", "rag", "mongodb"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.4.3",
+    "axios": "^1.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
