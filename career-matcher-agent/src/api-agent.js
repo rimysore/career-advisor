@@ -4,8 +4,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const axios = require('axios');
 
-// CORRECT: Access .default from SDK
-const Anthropic = require('@anthropic-ai/sdk').default;
+// WORKING: Correct Anthropic import
+const { Anthropic } = require('@anthropic-ai/sdk');
 
 const connectDB = require('./config/mongodb');
 const Career = require('./models/Career');
@@ -26,9 +26,6 @@ const client = new Anthropic({
 
 connectDB();
 
-/**
- * Fetch jobs from Adzuna API
- */
 async function fetchJobsFromAdzuna(jobTitle) {
   try {
     const response = await axios.get('https://api.adzuna.com/v1/api/jobs/us/search/1', {
@@ -97,11 +94,7 @@ app.post('/api/career-advice', async (req, res) => {
 
     searchResults = await searchCareersWithVectors(question);
     
-    if (searchResults.length === 0) {
-      console.log('⚠️  No careers found in database\n');
-    } else {
-      console.log(`✅ Found ${searchResults.length} matching careers\n`);
-    }
+    console.log(`✅ Found ${searchResults.length} matching careers\n`);
 
     const context = formatContextForClaude(searchResults);
     
@@ -165,17 +158,12 @@ Provide personalized career advice based on the database. Include:
       answer: answer,
       careers: searchResults.map(c => ({ title: c.title, score: c.finalScore })),
       jobs: jobs,
-      skillsLearned: extractedSkills.length,
-      jobCount: jobs.length
+      skillsLearned: extractedSkills.length
     });
     console.log('='.repeat(70) + '\n');
   } catch (error) {
     console.error('❌ Error:', error.message);
-    
-    res.status(500).json({ 
-      success: false, 
-      error: error.message
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -184,15 +172,13 @@ app.get('/api/stats', async (req, res) => {
     const careerCount = await Career.countDocuments();
     const skillCount = await Skill.countDocuments();
     const queryCount = await Query.countDocuments();
-    const learnedSkills = await Skill.countDocuments({ source: 'user_query' });
     
     res.json({
       database: 'MongoDB Atlas',
       careers: careerCount,
       skills: skillCount,
-      learnedSkills: learnedSkills,
       totalQueries: queryCount,
-      status: 'Active with Vector Search'
+      status: 'Active'
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -200,16 +186,10 @@ app.get('/api/stats', async (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    database: 'MongoDB Atlas',
-    search: 'Vector Embeddings',
-    timestamp: new Date()
-  });
+  res.json({ status: 'OK', database: 'MongoDB Atlas' });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ API running on http://localhost:${PORT}`);
-  console.log(`🧠 Using Vector Embeddings for semantic search\n`);
 });
