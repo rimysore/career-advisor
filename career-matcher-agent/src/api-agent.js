@@ -3,7 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const axios = require('axios');
-const { Anthropic } = require('@anthropic-ai/sdk');
+
+// FIX: Correct Anthropic import
+const Anthropic = require('@anthropic-ai/sdk').default;
+
 const connectDB = require('./config/mongodb');
 const Career = require('./models/Career');
 const Skill = require('./models/Skill');
@@ -211,7 +214,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ API running on http://localhost:${PORT}`);
   console.log(`🧠 Using Vector Embeddings for semantic search\n`);
