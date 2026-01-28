@@ -12,6 +12,7 @@ const Skill = require('./models/Skill');
 const Query = require('./models/Query');
 const { searchCareersWithVectors, formatContextForClaude } = require('./services/vector-rag');
 const { extractSkillsFromResponse } = require('./services/skill-extractor');
+const { extractResumeText, extractSkills, extractJobTitles, calculateATSScore, getATSFeedback } = require('./services/resume-parser');
 
 const app = express();
 app.use(cors());
