@@ -197,7 +197,7 @@ app.post('/api/analyze-resume-for-career', upload.single('resume'), async (req, 
     }
 
     const targetCareer = req.body.targetCareer || 'Software Engineer';
-    const resumeText = extractResumeText(req.file.buffer);
+    const resumeText = extractResumeText(req.file.buffer, req.file.mimetype);
 
     // Extract skills and job titles
     const extractedSkills = extractSkills(resumeText);
