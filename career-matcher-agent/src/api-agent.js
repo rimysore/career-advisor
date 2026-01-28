@@ -197,8 +197,11 @@ app.post('/api/analyze-resume-for-career', upload.single('resume'), async (req, 
     }
 
     const targetCareer = req.body.targetCareer || 'Software Engineer';
-    const resumeText = extractResumeText(req.file.buffer, req.file.mimetype);
-
+    const resumeText = await extractResumeText(req.file.buffer, req.file.mimetype);
+    
+    if (!resumeText || typeof resumeText !== 'string' || resumeText.trim().length === 0) {
+ 	 return res.status(400).json({ error: 'Could not read resume file. Please upload as TXT or DOC.' });
+    }
     // Extract skills and job titles
     const extractedSkills = extractSkills(resumeText);
     const jobTitles = extractJobTitles(resumeText);
