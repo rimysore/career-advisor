@@ -40,9 +40,9 @@ function App() {
         setCareers(data.careers || []);
         setHasSearched(true);
         
-        if (data.careers && data.careers.length > 0) {
-          setSelectedCareer(data.careers[0].title);
-        }
+        // Extract target career from user's question
+	const targetCareer = extractTargetCareer(queryQuestion);
+	setSelectedCareer(targetCareer);
 
         generateFollowUps(queryQuestion, data.answer);
 
@@ -96,6 +96,24 @@ function App() {
   const handleFollowUp = (followUpQuery) => {
     handleAsk(followUpQuery);
   };
+  
+  const extractTargetCareer = (question) => {
+  const careers = [
+    'React', 'Frontend Engineer', 'Backend Developer', 'DevOps Engineer',
+    'Cloud Engineer', 'Data Scientist', 'Full Stack Developer', 'Mobile Developer',
+    'QA Engineer', 'Product Manager', 'Solutions Architect'
+  ];
+
+  const lowerQuestion = question.toLowerCase();
+  
+  for (const career of careers) {
+    if (lowerQuestion.includes(career.toLowerCase())) {
+      return career;
+    }
+  }
+
+  return 'Software Engineer'; // Default
+  };  
 
   return (
     <div className="app">
