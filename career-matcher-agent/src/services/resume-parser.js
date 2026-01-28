@@ -2,7 +2,7 @@
  * Resume Parser - Extracts text and skills from resumes with PDF support
  */
 
-const pdfParse = require('pdf-parse');
+const pdf = require('pdf-parse');
 
 const KNOWN_SKILLS = [
   'JavaScript', 'Python', 'Java', 'Go', 'Rust', 'TypeScript',
@@ -37,14 +37,19 @@ async function extractResumeText(fileContent, mimeType) {
   try {
     // If PDF
     if (mimeType === 'application/pdf' || fileContent.toString('utf8', 0, 4) === '%PDF') {
-      const data = await pdfParse(fileContent);
+      const data = await pdf(fileContent);
       return data.text || '';
     }
     // If plain text or DOC
     return fileContent.toString('utf8');
   } catch (error) {
-    console.error('Error extracting text:', error);
-    return '';
+    console.error('Error extracting text:', error.message);
+    // Fallback to plain text extraction
+    try {
+      return fileContent.toString('utf8');
+    } catch (e) {
+      return '';
+    }
   }
 }
 
