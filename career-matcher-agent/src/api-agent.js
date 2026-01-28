@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const axios = require('axios');
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 
 const connectDB = require('./config/mongodb');
 const Career = require('./models/Career');
