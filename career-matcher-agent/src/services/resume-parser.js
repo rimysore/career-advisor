@@ -1,8 +1,6 @@
 /**
- * Resume Parser - Extracts text and skills from resumes with PDF support
+ * Resume Parser - Extracts text and skills from resumes
  */
-
-const pdfParse = require('pdf-parse/legacy/build/pdf.js');
 
 const KNOWN_SKILLS = [
   'JavaScript', 'Python', 'Java', 'Go', 'Rust', 'TypeScript',
@@ -30,116 +28,63 @@ const JOB_TITLES = [
   'Engineering Manager', 'Solutions Architect', 'Systems Engineer'
 ];
 
-/**
- * Extract text from resume (supports PDF and plain text)
- */
 async function extractResumeText(fileContent, mimeType) {
   try {
-    // If PDF
-    if (mimeType === 'application/pdf' || fileContent.toString('utf8', 0, 4) === '%PDF') {
-      const data = await pdfParse(fileContent);
-      return data.text || '';
-    }
-    // If plain text or DOC
-    return fileContent.toString('utf8');
+    let text = fileContent.toString('utf8');
+    text = text.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/g, ' ');
+    return text;
   } catch (error) {
     console.error('Error extracting text:', error.message);
-    // Fallback to plain text extraction
-    try {
-      return fileContent.toString('utf8');
-    } catch (e) {
-      return '';
-    }
+    return '';
   }
 }
 
-/**
- * Extract skills from resume text
- */
 function extractSkills(resumeText) {
   const skills = new Set();
   const lowerText = resumeText.toLowerCase();
-
   KNOWN_SKILLS.forEach(skill => {
     if (lowerText.includes(skill.toLowerCase())) {
       skills.add(skill);
     }
   });
-
   return Array.from(skills);
 }
 
-/**
- * Extract job titles from resume
- */
 function extractJobTitles(resumeText) {
   const titles = new Set();
   const lowerText = resumeText.toLowerCase();
-
   JOB_TITLES.forEach(title => {
     if (lowerText.includes(title.toLowerCase())) {
       titles.add(title);
     }
   });
-
   return Array.from(titles);
 }
 
-/**
- * Calculate ATS Score (0-100)
- */
 function calculateATSScore(resumeText) {
   let score = 0;
-
-  // 1. Contact Info (15 points)
-  if (resumeText.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/)) {
-    score += 5;
-  }
-  if (resumeText.match(/\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/)) {
-    score += 5;
-  }
-  if (resumeText.match(/linkedin|github|portfolio/i)) {
-    score += 5;
-  }
-
-  // 2. Formatting (20 points)
+  if (resumeText.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/)) score += 5;
+  if (resumeText.match(/\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/)) score += 5;
+  if (resumeText.match(/linkedin|github|portfolio/i)) score += 5;
+  
   const lines = resumeText.split('\n');
   if (lines.length > 10) score += 5;
-  if (resumeText.includes('EXPERIENCE') || resumeText.includes('WORK HISTORY')) {
-    score += 5;
-  }
-  if (resumeText.includes('EDUCATION') || resumeText.includes('SCHOOL')) {
-    score += 5;
-  }
-  if (resumeText.includes('SKILLS')) {
-    score += 5;
-  }
-
-  // 3. Keywords (30 points)
+  if (resumeText.includes('EXPERIENCE') || resumeText.includes('WORK HISTORY')) score += 5;
+  if (resumeText.includes('EDUCATION') || resumeText.includes('SCHOOL')) score += 5;
+  if (resumeText.includes('SKILLS')) score += 5;
+  
   const skills = extractSkills(resumeText);
   const jobTitles = extractJobTitles(resumeText);
-  
   if (skills.length >= 5) score += 10;
   else if (skills.length >= 3) score += 5;
-  
   if (jobTitles.length >= 2) score += 10;
   else if (jobTitles.length >= 1) score += 5;
+  if (resumeText.toLowerCase().includes('achievement') || resumeText.toLowerCase().includes('responsibility')) score += 5;
   
-  if (resumeText.toLowerCase().includes('achievement') || 
-      resumeText.toLowerCase().includes('responsibility')) {
-    score += 5;
-  }
-
-  // 4. Experience (20 points)
   const yearMatch = resumeText.match(/20\d{2}|19\d{2}/g);
-  if (yearMatch && yearMatch.length >= 2) {
-    score += 10;
-  }
-  if (resumeText.match(/\d+\s*(years?|yrs?)/i)) {
-    score += 10;
-  }
-
-  // 5. Skills Listed (15 points)
+  if (yearMatch && yearMatch.length >= 2) score += 10;
+  if (resumeText.match(/\d+\s*(years?|yrs?)/i)) score += 10;
+  
   if (skills.length >= 8) score += 15;
   else if (skills.length >= 5) score += 10;
   else if (skills.length >= 3) score += 5;
@@ -147,51 +92,15 @@ function calculateATSScore(resumeText) {
   return Math.min(score, 100);
 }
 
-/**
- * Get ATS Feedback
- */
 function getATSFeedback(score) {
   if (score >= 85) {
-    return {
-      level: 'Excellent',
-      tips: [
-        '✅ Resume is ATS-friendly',
-        '✅ Good keyword density',
-        'Consider adding more quantifiable achievements'
-      ]
-    };
+    return { level: 'Excellent', tips: ['✅ Resume is ATS-friendly', '✅ Good keyword density'] };
   } else if (score >= 70) {
-    return {
-      level: 'Good',
-      tips: [
-        '✅ Decent ATS score',
-        'Add more relevant keywords',
-        'Make sure contact info is clearly visible',
-        'Use standard section headers (SKILLS, EXPERIENCE)'
-      ]
-    };
+    return { level: 'Good', tips: ['✅ Decent ATS score', 'Add more relevant keywords'] };
   } else if (score >= 50) {
-    return {
-      level: 'Fair',
-      tips: [
-        '⚠️ Missing key sections',
-        'Add SKILLS section explicitly',
-        'Include contact information (email, phone)',
-        'Add job titles and years of experience',
-        'Use standard formatting'
-      ]
-    };
+    return { level: 'Fair', tips: ['⚠️ Missing key sections', 'Add SKILLS section explicitly'] };
   } else {
-    return {
-      level: 'Needs Work',
-      tips: [
-        '❌ Major ATS issues',
-        'Restructure with clear sections: CONTACT, EXPERIENCE, EDUCATION, SKILLS',
-        'Add measurable achievements and numbers',
-        'Include relevant keywords for your industry',
-        'Use standard font and formatting'
-      ]
-    };
+    return { level: 'Needs Work', tips: ['❌ Major ATS issues', 'Restructure with clear sections'] };
   }
 }
 
