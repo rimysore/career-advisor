@@ -1,20 +1,19 @@
 import { useState } from 'react';
 import { Logo } from './Logo';
+import { ResumeSuggestions } from './ResumeSuggestions';
 import './App.css';
 
-// PRODUCTION URL - HARDCODED
 const API_URL = 'https://career-advisor-2dkz.onrender.com';
 
 function App() {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
-  const [jobs, setJobs] = useState([]);
   const [careers, setCareers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
   const [followUpSuggestions, setFollowUpSuggestions] = useState([]);
-  const [conversationHistory, setConversationHistory] = useState([]);
+  const [selectedCareer, setSelectedCareer] = useState(null);
 
   const handleAsk = async (customQuestion = null) => {
     const queryQuestion = customQuestion || question;
@@ -23,7 +22,6 @@ function App() {
     setLoading(true);
     setError('');
     setAnswer('');
-    setJobs([]);
     setCareers([]);
     setFollowUpSuggestions([]);
 
@@ -34,21 +32,17 @@ function App() {
         body: JSON.stringify({ question: queryQuestion })
       });
 
-      if (!response.ok) {
-        throw new Error('API Error: ' + response.status);
-      }
+      if (!response.ok) throw new Error('API Error: ' + response.status);
 
       const data = await response.json();
       if (data.success) {
         setAnswer(data.answer);
-        setJobs(data.jobs || []);
         setCareers(data.careers || []);
         setHasSearched(true);
-
-        setConversationHistory([
-          ...conversationHistory,
-          { question: queryQuestion, answer: data.answer }
-        ]);
+        
+        if (data.careers && data.careers.length > 0) {
+          setSelectedCareer(data.careers[0].title);
+        }
 
         generateFollowUps(queryQuestion, data.answer);
 
@@ -71,38 +65,26 @@ function App() {
 
     if (lowerQuestion.includes('software') || lowerQuestion.includes('developer')) {
       suggestions.push({
-        text: '💼 What companies are hiring developers?',
-        query: 'What are top tech companies hiring software developers right now?'
+        text: '💼 What companies are hiring?',
+        query: 'What tech companies are actively hiring software developers?'
       });
       suggestions.push({
-        text: '📈 How to increase my salary as a developer?',
+        text: '📈 How to increase salary?',
         query: 'How can I increase my salary as a software developer?'
-      });
-      suggestions.push({
-        text: '🚀 Frontend vs Backend - which to learn?',
-        query: 'Should I specialize in frontend or backend development?'
       });
     } else if (lowerQuestion.includes('devops') || lowerQuestion.includes('cloud')) {
       suggestions.push({
-        text: '🚀 DevOps certifications worth getting?',
-        query: 'What are the best DevOps certifications (AWS, Kubernetes)?'
-      });
-      suggestions.push({
-        text: '💻 Companies hiring DevOps engineers?',
-        query: 'Which companies are actively hiring DevOps engineers?'
+        text: '🚀 Best DevOps certifications?',
+        query: 'What DevOps certifications should I pursue?'
       });
     } else {
       suggestions.push({
-        text: '📋 Resume tips for this role?',
-        query: 'What should I include in my resume for this career?'
-      });
-      suggestions.push({
-        text: '🎯 How to stand out?',
-        query: 'What can I do to stand out as a candidate?'
+        text: '📋 Resume tips?',
+        query: 'What should I include in my resume?'
       });
     }
 
-    setFollowUpSuggestions(suggestions.slice(0, 3));
+    setFollowUpSuggestions(suggestions.slice(0, 2));
   };
 
   const handleKeyPress = (e) => {
@@ -121,7 +103,7 @@ function App() {
         <div className="header-content">
           <div className="header-text">
             <h1>Career Advisor</h1>
-            <p>AI-powered guidance with real job opportunities</p>
+            <p>AI-powered guidance with resume optimization</p>
           </div>
           <div className="header-logo">
             <Logo />
@@ -132,7 +114,7 @@ function App() {
       <div className={`main-content ${hasSearched ? 'split' : 'single'}`}>
         <div className="left-section">
           <div className="card input-card">
-            <h2>Your Question</h2>
+            <h2>Your Career Question</h2>
             <textarea
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
@@ -159,7 +141,7 @@ function App() {
           {loading && (
             <div className="card loading-card">
               <div className="spinner"></div>
-              <p>Analyzing career opportunities...</p>
+              <p>Analyzing your career transition...</p>
             </div>
           )}
 
@@ -187,7 +169,7 @@ function App() {
 
               {followUpSuggestions.length > 0 && (
                 <div className="followup-section">
-                  <h3>Continue Exploring?</h3>
+                  <h3>Explore More?</h3>
                   <div className="followup-buttons">
                     {followUpSuggestions.map((suggestion, idx) => (
                       <button
@@ -208,52 +190,7 @@ function App() {
 
         {hasSearched && (
           <div className="right-section">
-            {careers.length > 0 && (
-              <div className="card careers-card">
-                <h2>Matched Roles</h2>
-                <div className="careers-list">
-                  {careers.map((career, idx) => (
-                    <div key={idx} className="career-item">
-                      <div className="career-rank">#{idx + 1}</div>
-                      <div className="career-info">
-                        <h4>{career.title}</h4>
-                        <div className="career-score">Match: {(career.score * 100).toFixed(0)}%</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {jobs.length > 0 && (
-              <div className="card jobs-card">
-                <h2>Available Opportunities</h2>
-                <div className="jobs-count">{jobs.length} jobs found</div>
-                <div className="jobs-list">
-                  {jobs.map((job, idx) => (
-                    <div key={idx} className="job-item">
-                      <div className="job-header">
-                        <h3 className="job-title">{job.title}</h3>
-                        <span className="job-rank">#{idx + 1}</span>
-                      </div>
-                      <p className="job-company">{job.company}</p>
-                      <p className="job-location">📍 {job.location}</p>
-                      {job.salary && <p className="job-salary">💰 {job.salary}</p>}
-                      <p className="job-posted">Posted: {job.posted}</p>
-                      <a href={job.url} target="_blank" rel="noopener noreferrer" className="btn-apply">
-                        View & Apply →
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {!loading && answer && jobs.length === 0 && (
-              <div className="card no-jobs">
-                <p>No jobs found. Try another role!</p>
-              </div>
-            )}
+            <ResumeSuggestions targetCareer={selectedCareer} />
           </div>
         )}
       </div>
