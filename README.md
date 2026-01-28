@@ -1,92 +1,107 @@
-# Career Advisor - AI-Powered Career Transition Guide
+# Career Advisor - AI Career Guidance App
 
-An intelligent career transition platform that combines AI analysis, vector embeddings, and real job listings to guide users through career changes.
+## What It Does
 
-## Features
+An AI-powered career guidance app that:
+- Answers career questions using Claude AI
+- Shows relevant job listings from Adzuna API
+- Learns from conversations using MongoDB
+- Uses semantic search (RAG) to find best career matches
 
-✨ **AI Career Analysis**
-- Uses Claude AI to provide personalized career guidance
-- RAG (Retrieval Augmented Generation) for context-aware responses
-- Vector embeddings for semantic understanding
+## Live App
 
-🔍 **Real Job Listings**
-- Integrated with Adzuna job API
-- Shows relevant opportunities based on user query
-- Direct apply links
+- **Frontend:** https://career-advisor-rithviks-projects-781599d8.vercel.app
+- **Backend API:** https://career-advisor-2dkz.onrender.com
 
-💾 **Intelligent Learning**
-- MongoDB-based storage
-- Learns new skills and careers from conversations
-- Vector search for better matching
+## How to Use
 
-🎯 **Interactive Follow-ups**
-- Smart follow-up suggestions
-- Continue exploring related topics
-- Conversational flow
+1. Go to the app
+2. Ask a career question like "I want to be a DevOps engineer"
+3. Get:
+   - AI analysis from Claude
+   - 3 best matched roles (RAG-based)
+   - Real jobs from Adzuna
+   - Follow-up suggestions to explore more
 
 ## Tech Stack
 
 **Frontend:**
 - React + Vite
 - Tailwind CSS
-- Modern UI with professional design
 
 **Backend:**
 - Node.js + Express
-- MongoDB Atlas
-- Anthropic Claude API
-- Adzuna Job API
+- MongoDB Atlas (database)
+- Claude API (AI)
+- Adzuna API (jobs)
 
-**Database:**
-- MongoDB Atlas (Cloud)
-- Vector embeddings support
+**Advanced Features:**
+- Vector embeddings for semantic search
+- RAG (Retrieval Augmented Generation)
+- Real-time job fetching
 
 ## Project Structure
 ```
 career-advisor/
-├── career-matcher-web/      (React Frontend)
+├── career-matcher-web/    (Frontend - React)
 │   ├── src/
-│   ├── public/
+│   │   ├── App.jsx       (Main component)
+│   │   ├── Logo.jsx      (Header logo)
+│   │   └── App.css       (Styling)
 │   └── package.json
-└── career-matcher-agent/    (Node.js Backend)
+│
+└── career-matcher-agent/  (Backend - Node.js)
     ├── src/
-    │   ├── api-agent.js
-    │   ├── models/
-    │   ├── services/
+    │   ├── api-agent.js           (Main API)
     │   ├── config/
+    │   │   └── mongodb.js         (DB connection)
+    │   ├── models/
+    │   │   ├── Career.js
+    │   │   ├── Skill.js
+    │   │   └── Query.js
+    │   ├── services/
+    │   │   ├── vector-rag.js      (Search engine)
+    │   │   ├── embeddings.js      (Vector conversion)
+    │   │   └── skill-extractor.js (AI text parsing)
     │   └── scripts/
+    │       └── migrate-to-mongodb.js
     └── package.json
 ```
 
-## Setup & Installation
+## API Endpoints
+```
+POST /api/career-advice
+- Input: { question: "your career question" }
+- Output: { answer, jobs[], careers[], skillsLearned }
+- Real jobs from Adzuna + AI analysis + matched roles
 
-### Prerequisites
-- Node.js 18+
-- MongoDB Atlas account (free tier)
-- Anthropic API key
-- Adzuna API credentials
+GET /api/stats
+- Returns database statistics
 
-### Backend Setup
+GET /health
+- Health check
+```
+
+## How RAG Works (The Smart Part)
+
+When you ask "I want DevOps engineer":
+
+1. **Question converts to vector** (numbers representing meaning)
+2. **Compares with all careers in database** using similarity scoring
+3. **Returns top 3 matches** by relevance, not just keywords
+4. **Sends to Claude** with context for personalized advice
+5. **Fetches real jobs** matching the roles
+
+This is semantic search - understands MEANING, not just words.
+
+## Setup (If You Want to Run Locally)
 ```bash
+# Backend
 cd career-matcher-agent
 npm install
-```
+NODE_ENV=development node src/api-agent.js
 
-Create `.env`:
-```
-MONGODB_URI=your_mongodb_uri
-ANTHROPIC_API_KEY=your_anthropic_key
-ADZUNA_APP_ID=your_app_id
-ADZUNA_API_KEY=your_api_key
-```
-
-Start:
-```bash
-npm start
-```
-
-### Frontend Setup
-```bash
+# Frontend (new terminal)
 cd career-matcher-web
 npm install
 npm run dev
@@ -94,29 +109,43 @@ npm run dev
 
 Visit: http://localhost:5173
 
-## API Endpoints
+## Key Technologies Explained
 
-**POST** `/api/career-advice`
-- Query: Career question
-- Response: Analysis + Jobs + Follow-ups
+**MongoDB Atlas:** Cloud database storing careers, skills, and queries
 
-**GET** `/api/stats`
-- Returns database statistics
+**Claude API:** AI model that understands career questions and gives advice
 
-**GET** `/health`
-- Health check endpoint
+**Adzuna API:** Real job listings database
+
+**Vector Embeddings:** Convert text to numbers for similarity comparison
+
+**RAG:** Retrieves relevant data from database before sending to AI
 
 ## Deployment
 
-- **Frontend:** Vercel
-- **Backend:** Render
-- **Database:** MongoDB Atlas
+- **Frontend:** Vercel (auto-deploys from GitHub)
+- **Backend:** Render (auto-deploys from GitHub)
+- **Database:** MongoDB Atlas (cloud, always on)
+
+Push to GitHub → Auto-deploys to production
+
+## What I Learned Building This
+
+1. Full-stack development (React, Node.js, MongoDB)
+2. AI integration with Claude API
+3. Vector search and semantic understanding
+4. RAG pattern for better AI responses
+5. API integration (Adzuna jobs)
+6. Cloud deployment (Vercel, Render, MongoDB)
+
+## Next Features to Build
+
+- Resume upload + analysis
+- Interview question generator
+- Salary negotiation guide
+- Personalized learning paths
+- User authentication
 
 ## License
 
 MIT
-
-## Author
-
-Built with ❤️ for career changers
-
