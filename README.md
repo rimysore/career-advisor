@@ -10,8 +10,7 @@ An AI-powered career guidance app that:
 
 ## Live App
 
-- **Frontend:** https://career-advisor-rithviks-projects-781599d8.vercel.app
-- **Backend API:** https://career-advisor-2dkz.onrender.com
+- **Frontend:** - https://career-advisor-delta.vercel.app/
 
 ## How to Use
 
